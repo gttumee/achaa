@@ -31,6 +31,7 @@ class CustomerResource extends Resource
     protected static ?string $pluralModelLabel = 'Ачаа бүртгэл';
     protected static bool $hasTitleCaseModelLabel = false;
     protected static ?string $navigationLabel = 'Ачаа бүртгэл';
+     protected static bool $canCreateAnother = false;
 
     public static function form(Form $form): Form
     {
@@ -115,7 +116,7 @@ class CustomerResource extends Resource
                     Tables\Columns\TextColumn::make('payment_type')
                             ->alignLeft()
                             ->badge()
-                            ->color('success')
+                            ->color('info')
                             ->icon('heroicon-o-credit-card')
                             ->formatStateUsing(fn ($state) => config('constants.payment_types')[$state] ?? 'Тодорхойгүй')
                             ->alignLeft(),
@@ -138,7 +139,9 @@ class CustomerResource extends Resource
                  Tables\Actions\ViewAction::make()
                  ->label('Дэлгэрэнгүй')
                  ->button()
-                // Tables\Actions\EditAction::make(),
+                 ->color('info'),
+                Tables\Actions\DeleteAction::make()
+                ->button()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
