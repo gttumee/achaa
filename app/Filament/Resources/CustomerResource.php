@@ -96,23 +96,15 @@ class CustomerResource extends Resource
             ->columns([
                   Tables\Columns\Layout\Split::make([
                     Tables\Columns\Layout\Stack::make([
-                        Tables\Columns\TextColumn::make('name')
-                            ->searchable()
-                            ->sortable('Нэр')
-                            ->weight('medium')
-                            ->icon('heroicon-s-user')
-                            ->alignLeft(),
                         Tables\Columns\TextColumn::make('phone')
                             ->label('Утас')
                             ->searchable()
                             ->sortable()
-                            // ->badge()
                             ->color('gray')
                             ->icon('heroicon-m-phone')
                             ->alignLeft(),
                         Tables\Columns\TextColumn::make('second_phone')
                             ->label('Утас')
-                            // ->badge()
                             ->searchable()
                             ->sortable()
                             ->color('gray')
@@ -123,14 +115,20 @@ class CustomerResource extends Resource
                     Tables\Columns\TextColumn::make('pay')
                             ->alignLeft()
                             ->color('info')
+                            ->label('Төлбөр')
                             ->badge()
+                            ->searchable()
+                            ->sortable()
                             ->formatStateUsing(fn ($state) => number_format((float) $state, 0, '.', ','). ' ₮')
                             ->icon('heroicon-s-document-currency-yen')
                             ->alignLeft(),
                     Tables\Columns\TextColumn::make('payment_type')
                             ->alignLeft()
                             ->badge()
+                            ->searchable()
                             ->color('info')
+                            ->label('Төлбөрийн төрөл')
+                            ->sortable()
                             ->icon('heroicon-o-credit-card')
                             ->formatStateUsing(fn ($state) => config('constants.payment_types')[$state] ?? 'Тодорхойгүй')
                             ->alignLeft(),
@@ -138,13 +136,21 @@ class CustomerResource extends Resource
                       Tables\Columns\Layout\Stack::make([
                     Tables\Columns\TextColumn::make('transfer_cost')
                     ->alignLeft()
+                    ->sortable()
+                    ->searchable()
+                    ->label('Тээврийн зардал')
                     ->formatStateUsing(fn ($state) => 'Тээврийн зардал: ' . number_format((float) $state, 0, '.', ',') . ' ₮'),
                     Tables\Columns\TextColumn::make('aimag')
-                            ->label('GitHub')
+                           ->sortable()
+                            ->label('Аймаг')
+                            ->searchable()
                             ->alignLeft()
                            ->formatStateUsing(fn ($state) => 'Аймаг: ' . (config('constants.aimag')[$state] ?? 'Тодорхойгүй')),
                      Tables\Columns\TextColumn::make('sum')
                             ->alignLeft()
+                            ->searchable()
+                             ->sortable()
+                            ->label('Сум')
                             ->formatStateUsing(fn ($state) => 'Сум: ' . (config('constants.sum')[$state] ?? 'Тодорхойгүй')),                   
                     ])->space(2),
                 ])->from('md')
