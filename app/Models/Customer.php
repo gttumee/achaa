@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Customer extends Model
 {
       protected $fillable = [
-        'name',
+        'transfer_cost',
         'phone',
         'second_phone',
         'aimag',
@@ -15,6 +15,8 @@ class Customer extends Model
         'content',
         'add_content',
         'pay',
-        'payment_type'
+        'status',
+        'payment_type',
+        'payment_status'
     ];
 }

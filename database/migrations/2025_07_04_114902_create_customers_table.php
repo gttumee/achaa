@@ -12,17 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->nullable;
-            $table->string('phone');
-            $table->string('pay');
-            $table->string('second_phone')->nullable;
-            $table->string('payment_type');
-            $table->string('aimag')->nullable;
-            $table->string('sum')->nullable;
-            $table->text('add_content')->nullable;
-            $table->text('content')->nullable;            
-            $table->timestamps();
+        $table->id();
+        $table->string('transfer_cost')->nullable();
+        $table->string('phone');
+        $table->string('payment_status')->nullable();
+        $table->string('pay');
+        $table->string('second_phone')->nullable();
+        $table->string('payment_type');
+        $table->string('aimag')->nullable();
+        $table->string('sum')->nullable();
+        $table->text('add_content')->nullable();
+        $table->text('content')->nullable();
+        $table->timestamps();
+
         });
     }
 

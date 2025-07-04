@@ -6,6 +6,7 @@ use App\Filament\Resources\CustomerResource\Pages;
 use App\Filament\Resources\CustomerResource\RelationManagers;
 use App\Models\Customer;
 use Filament\Forms;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -20,6 +21,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Support\RawJs;
+use Filament\Notifications\Notification;
+
 
 
 
@@ -37,28 +40,39 @@ class CustomerResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                ->label('Нэр')
-                ->placeholder('Батбол'),
                 TextInput::make('phone')
                 ->label('Утас')
+                ->required()
                 ->numeric()
                 ->placeholder('88000011'),
                 TextInput::make('second_phone')
                 ->label('Утас2')
                 ->numeric()
                 ->placeholder('88000011'),
+                TextInput::make('transfer_cost')
+                ->label('Тээврийн зардал')
+                ->placeholder('250,000')
+                  ->mask(RawJs::make('$money($input)'))
+                 ->stripCharacters(',')
+                ->numeric(),
                 TextInput::make('pay')
                 ->placeholder('500,000')
+                ->required()
                 ->label('Төлбөр')
                 ->mask(RawJs::make('$money($input)'))
                  ->stripCharacters(',')
                 ->numeric(),
                 Select::make('payment_type')
+                ->required()
                 ->label('Төлбөрийн хэлбэр')
                 ->options(config('constants.payment_types'))
                 ->reactive()
                  ->afterStateUpdated(fn ($set) => $set('payment_types', null)),
+                 Select::make('payment_status')
+                ->label('Төлбөрийн статус')
+                ->options(config('constants.payment_status')) 
+                ->default('not_payd') 
+                ->reactive(),
                 Select::make('aimag')
                 ->label('Аймаг')
                 ->searchable()
@@ -110,7 +124,7 @@ class CustomerResource extends Resource
                             ->alignLeft()
                             ->color('info')
                             ->badge()
-                            ->formatStateUsing(fn ($state) => number_format((float) $state))
+                            ->formatStateUsing(fn ($state) => number_format((float) $state, 0, '.', ','). ' ₮')
                             ->icon('heroicon-s-document-currency-yen')
                             ->alignLeft(),
                     Tables\Columns\TextColumn::make('payment_type')
@@ -122,6 +136,9 @@ class CustomerResource extends Resource
                             ->alignLeft(),
                     ])->space(2),
                       Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\TextColumn::make('transfer_cost')
+                    ->alignLeft()
+                    ->formatStateUsing(fn ($state) => 'Тээврийн зардал: ' . number_format((float) $state, 0, '.', ',') . ' ₮'),
                     Tables\Columns\TextColumn::make('aimag')
                             ->label('GitHub')
                             ->alignLeft()
@@ -130,8 +147,9 @@ class CustomerResource extends Resource
                             ->alignLeft()
                             ->formatStateUsing(fn ($state) => 'Сум: ' . (config('constants.sum')[$state] ?? 'Тодорхойгүй')),                   
                     ])->space(2),
-                ])->from('md'),
+                ])->from('md')
             ])
+             ->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])
@@ -140,8 +158,26 @@ class CustomerResource extends Resource
                  ->label('Дэлгэрэнгүй')
                  ->button()
                  ->color('info'),
-                Tables\Actions\DeleteAction::make()
-                ->button()
+                // Төлөөгүй үед гарч ирэх action
+    Tables\Actions\Action::make('payment_status')
+        ->label('Төлөгдөөгүй')
+        ->visible(fn ($record) => $record->payment_status !== 'payd')
+        ->requiresConfirmation()
+        ->modalHeading('Та энэ төлбөрийг төлсөн гэж бүртгэх үү？')
+        ->modalDescription('Та мэдээллээ сайтар шалгана уу.')
+        ->modalButton('Тийм, хадгалах')
+        ->color('danger')
+        ->button()
+        ->action(fn ($record) => $record->update(['payment_status' => 'payd'])),
+
+    // Төлсөн үед гарч ирэх action
+    Tables\Actions\Action::make('alreadyPayd')
+        ->label('Төлөгдсөн')
+        ->disabled()
+        ->button()
+        ->visible(fn ($record) => $record->payment_status === 'payd')
+        ->color('success')
+        ->icon('heroicon-o-check-circle'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
