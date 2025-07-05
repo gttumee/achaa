@@ -18,11 +18,12 @@ return new class extends Migration
         $table->string('payment_status')->nullable();
         $table->string('pay');
         $table->string('second_phone')->nullable();
-        $table->string('payment_type');
+        $table->string('payment_type')->nullable();
         $table->string('aimag')->nullable();
-        $table->string('sum')->nullable();
+        $table->string('logistic_type')->nullable();
         $table->text('add_content')->nullable();
         $table->text('content')->nullable();
+        $table->text('payment_content')->nullable();
         $table->timestamps();
 
         });

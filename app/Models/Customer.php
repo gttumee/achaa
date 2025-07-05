@@ -17,6 +17,8 @@ class Customer extends Model
         'pay',
         'status',
         'payment_type',
-        'payment_status'
+        'payment_status',
+        'payment_content',
+        'logistic_type'
     ];
 }

@@ -2,48 +2,44 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CustomerResource\Pages;
-use App\Filament\Resources\CustomerResource\RelationManagers;
+use App\Filament\Resources\IncomingShipmentResource\Pages;
+use App\Filament\Resources\IncomingShipmentResource\RelationManagers;
 use App\Models\Customer;
+use App\Models\IncomingShipment;
 use Filament\Forms;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Split;
-use Filament\Support\Enums\FontWeight;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Support\RawJs;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\FontWeight;
 use Filament\Infolists\Components\Fieldset;
 
 
-
-
-
-class CustomerResource extends Resource
+class IncomingShipmentResource extends Resource
 {
     protected static ?string $model = Customer::class;
-
-protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ирсэн
-    protected static ?string $pluralModelLabel = 'Явсан ачаа';
+    protected static ?string $navigationIcon = 'heroicon-o-truck';
+    protected static ?string $pluralModelLabel = 'Ирсэн ачаа';
     protected static bool $hasTitleCaseModelLabel = false;
-    protected static ?string $navigationLabel = 'Явсан ачаа';
+    protected static ?string $navigationLabel = 'Ирсэн ачаа';
      protected static bool $canCreateAnother = false;
 
     public static function form(Form $form): Form
     {
         return $form
-      
-            ->schema([
+           ->schema([
                 TextInput::make('phone')
                 ->label('Утас')
                 ->required()
@@ -60,7 +56,7 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                  ->stripCharacters(',')
                 ->numeric(),
                Hidden::make('logistic_type')
-                ->default('outgoing')
+                ->default('incoming')
                 ->dehydrated(true),
                 TextInput::make('pay')
                 ->placeholder('500,000')
@@ -74,7 +70,7 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                 ->options(config('constants.payment_status')) 
                 ->default('not_payd') 
                 ->reactive()
-                  ->disabled(fn ($livewire) =>
+                ->disabled(fn ($livewire) =>
                     $livewire instanceof \Filament\Resources\Pages\CreateRecord
                  ),
                 Select::make('aimag')
@@ -115,6 +111,7 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                             ->alignLeft()
                             ->label('Төлбөр')
                             ->badge()
+                            ->color('info')
                             ->searchable()
                             ->sortable()
                             ->formatStateUsing(fn ($state) => number_format((float) $state, 0, '.', ','). ' ₮')
@@ -123,6 +120,7 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                     Tables\Columns\TextColumn::make('payment_type')
                             ->alignLeft()
                             ->badge()
+                            ->color('info')
                             ->searchable()
                             ->label('Төлбөрийн төрөл')
                             ->sortable()
@@ -155,12 +153,11 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
             ->filters([
                 //
             ])
-            ->actions([
+              ->actions([
                  Tables\Actions\ViewAction::make()
                  ->label('Дэлгэрэнгүй')
                  ->button()
-                 ->color('primary'),
-                // Төлөөгүй үед гарч ирэх action
+                 ->color('info'),
                 Tables\Actions\Action::make('payment_status')
                  ->label('Төлөгдөөгүй')
                 ->icon('heroicon-o-x-circle')
@@ -210,7 +207,7 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
 public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
-            ->schema([
+           ->schema([
                 Fieldset::make('Холбоо барих')
                 ->schema([
                 TextEntry::make('phone')
@@ -260,9 +257,9 @@ public static function infolist(Infolist $infolist): Infolist
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCustomers::route('/'),
-            'create' => Pages\CreateCustomer::route('/create'),
-            'edit' => Pages\EditCustomer::route('/{record}/edit'),
+            'index' => Pages\ListIncomingShipments::route('/'),
+            'create' => Pages\CreateIncomingShipment::route('/create'),
+            'edit' => Pages\EditIncomingShipment::route('/{record}/edit'),
         ];
     }
 }
