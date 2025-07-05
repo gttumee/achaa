@@ -27,32 +27,31 @@ class ListIncomingShipments extends ListRecords
        protected function getTableQuery(): Builder
     {
         return parent::getTableQuery()
-            ->where('logistic_type', 'incoming'); // ✅ ここで絞る
+            ->where('logistic_type', 'incoming');
     }
 
 public function getTabs(): array
 {
-    return [
+ return [
         'all' => Tab::make('Бүгд')
             ->badgeColor('info')
             ->modifyQueryUsing(fn (Builder $query) =>
                 $query->where('logistic_type', 'incoming')
             )
-                ->badge(Customer::query()
+              ->badge(Customer::query()
                 ->where('logistic_type', 'incoming')
                 ->count()
             ),
-            
+
 
         'not_pay' => Tab::make('Төлөгдөөгүй')
-        ->badgeColor('info')
-    ->modifyQueryUsing(fn (Builder $query) =>
-        $query->where('payment_status', 'not_payd')
-        
-    )
-     ->badge(Customer::query()
+            ->badgeColor('info')
+            ->modifyQueryUsing(fn (Builder $query) =>
+                $query->where('payment_status', 'not_payd')
+            )
+            ->badge(Customer::query()
                 ->where('payment_status', 'not_payd')
-                ->where('logistic_type', 'outgoing')
+                ->where('logistic_type', 'incoming')
                 ->count()
             ),
 
@@ -62,11 +61,11 @@ public function getTabs(): array
                 $query->where('payment_status', 'payd')
                       ->where('logistic_type', 'incoming')
             )
-               ->badge(Customer::query()
+             ->badge(Customer::query()
                 ->where('payment_status', 'payd')
-                ->where('logistic_type', 'outgoing')
+                ->where('logistic_type', 'incoming')
                 ->count()
-        ),
+             )
     ];
 }
 }
