@@ -144,6 +144,7 @@ class IncomingShipmentResource extends Resource
                      Tables\Columns\TextColumn::make('created_at')
                             ->alignLeft()
                             ->searchable()
+                            ->label('Огноо')
                              ->sortable()
                             ->formatStateUsing(fn ($state) => 'Огноо: ' .$state),
                     ])->space(2),

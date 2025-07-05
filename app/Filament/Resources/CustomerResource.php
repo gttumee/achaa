@@ -48,8 +48,6 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                 ->label('Утас')
                 ->required()
                 ->numeric()
-                ->minLength(8)
-                ->maxLength(8)
                 ->placeholder('88000011'),
                 TextInput::make('second_phone')
                 ->label('Утас2')
@@ -149,6 +147,7 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                             ->alignLeft()
                             ->searchable()
                              ->sortable()
+                            ->label('Огноо')
                             ->formatStateUsing(fn ($state) => 'Огноо: ' .$state),
                     ])->space(2),
                 ])->from('md')

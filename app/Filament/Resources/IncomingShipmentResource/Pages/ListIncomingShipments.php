@@ -34,36 +34,39 @@ public function getTabs(): array
 {
     return [
         'all' => Tab::make('Бүгд')
+            ->badgeColor('info')
             ->modifyQueryUsing(fn (Builder $query) =>
                 $query->where('logistic_type', 'incoming')
+            )
+                ->badge(Customer::query()
+                ->where('logistic_type', 'incoming')
+                ->count()
             ),
+            
 
         'not_pay' => Tab::make('Төлөгдөөгүй')
+        ->badgeColor('info')
     ->modifyQueryUsing(fn (Builder $query) =>
         $query->where('payment_status', 'not_payd')
+        
     )
-    ->badge(fn () => Customer::query()
-        ->where('payment_status', 'not_payd')
-        ->count()
-    ),
+     ->badge(Customer::query()
+                ->where('payment_status', 'not_payd')
+                ->where('logistic_type', 'outgoing')
+                ->count()
+            ),
 
         'payd' => Tab::make('Төлсөн')
+            ->badgeColor('info')
             ->modifyQueryUsing(fn (Builder $query) =>
                 $query->where('payment_status', 'payd')
                       ->where('logistic_type', 'incoming')
-            ),
-
-        'card' => Tab::make('Карт')
-            ->modifyQueryUsing(fn (Builder $query) =>
-                $query->where('payment_type', '1')
-                      ->where('logistic_type', 'incoming')
-            ),
-
-        'cash' => Tab::make('Бэлэн')
-            ->modifyQueryUsing(fn (Builder $query) =>
-                $query->where('payment_type', '0')
-                      ->where('logistic_type', 'incoming')
-            ),
+            )
+               ->badge(Customer::query()
+                ->where('payment_status', 'payd')
+                ->where('logistic_type', 'outgoing')
+                ->count()
+        ),
     ];
 }
 }
