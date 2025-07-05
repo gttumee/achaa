@@ -158,10 +158,12 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
             ])
             ->actions([
                  Tables\Actions\ViewAction::make()
-                 ->label('Дэлгэрэнгүй')
-                 ->button()
-                 ->color('primary'),
+                 ->color('primary')
+                 ->button(),
                 // Төлөөгүй үед гарч ирэх action
+                Tables\Actions\EditAction::make()
+                ->button(),
+
                 Tables\Actions\Action::make('payment_status')
                  ->label('Төлөгдөөгүй')
                 ->icon('heroicon-o-x-circle')
@@ -263,7 +265,7 @@ public static function infolist(Infolist $infolist): Infolist
         return [
             'index' => Pages\ListCustomers::route('/'),
             'create' => Pages\CreateCustomer::route('/create'),
-            'edit' => Pages\EditCustomer::route('/{record}/edit'),
+            // 'edit' => Pages\EditCustomer::route('/{record}/edit'),
         ];
     }
 }

@@ -155,10 +155,13 @@ class IncomingShipmentResource extends Resource
                 //
             ])
               ->actions([
-                 Tables\Actions\ViewAction::make()
-                 ->label('Дэлгэрэнгүй')
+                Tables\Actions\ViewAction::make()
+                 ->color('primary')
                  ->button()
-                 ->color('info'),
+                ->color('info'),
+                Tables\Actions\EditAction::make()
+                ->button()
+                ->color('info'),
                 Tables\Actions\Action::make('payment_status')
                  ->label('Төлөгдөөгүй')
                 ->icon('heroicon-o-x-circle')
@@ -260,7 +263,7 @@ public static function infolist(Infolist $infolist): Infolist
         return [
             'index' => Pages\ListIncomingShipments::route('/'),
             'create' => Pages\CreateIncomingShipment::route('/create'),
-            'edit' => Pages\EditIncomingShipment::route('/{record}/edit'),
+            // 'edit' => Pages\EditIncomingShipment::route('/{record}/edit'),
         ];
     }
 }

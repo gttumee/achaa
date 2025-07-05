@@ -9,6 +9,10 @@ use Filament\Resources\Pages\EditRecord;
 class EditIncomingShipment extends EditRecord
 {
     protected static string $resource = IncomingShipmentResource::class;
+     protected function getRedirectUrl(): string
+{
+    return $this->getResource()::getUrl('index');
+}
 
     protected function getHeaderActions(): array
     {
@@ -16,4 +20,5 @@ class EditIncomingShipment extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+    
 }
