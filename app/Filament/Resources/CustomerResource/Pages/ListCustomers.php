@@ -43,14 +43,22 @@ public function getTabs(): array
 
 
         'not_pay' => Tab::make('Төлөгдөөгүй')
-            ->modifyQueryUsing(fn (Builder $query) =>
+    ->modifyQueryUsing(fn (Builder $query) =>
+        $query->where(function ($query) {
+            $query->where('payment_status', 'not_payd')
+                  ->orWhereNull('payment_status');
+        })->where('logistic_type', 'outgoing')
+    )
+    ->badge(
+        Customer::query()
+            ->where(function ($query) {
                 $query->where('payment_status', 'not_payd')
-            )
-            ->badge(Customer::query()
-                ->where('payment_status', 'not_payd')
-                ->where('logistic_type', 'outgoing')
-                ->count()
-            ),
+                      ->orWhereNull('payment_status');
+            })
+            ->where('logistic_type', 'outgoing')
+            ->count()
+    ),
+
 
         'payd' => Tab::make('Төлсөн')
             ->modifyQueryUsing(fn (Builder $query) =>
