@@ -24,6 +24,7 @@ return new class extends Migration
         $table->text('add_content')->nullable();
         $table->text('content')->nullable();
         $table->text('payment_content')->nullable();
+        $table->foreignId('bairshil_id')->nullable()->constrained('bairshils');
         $table->timestamps();
 
         });

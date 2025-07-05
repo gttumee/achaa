@@ -73,11 +73,17 @@ class IncomingShipmentResource extends Resource
                 ->disabled(fn ($livewire) =>
                     $livewire instanceof \Filament\Resources\Pages\CreateRecord
                  ),
-                Select::make('aimag')
+                 Select::make('bairshil_id')
                 ->label('Байршил')
+                ->relationship('bairshil', 'name')
                 ->searchable()
-                ->options(config('constants.aimag'))
-                ->reactive(),
+                ->preload()
+                ->createOptionForm([
+                Forms\Components\TextInput::make('name')
+                ->label('Байршил нэр')
+                ->required(),
+                ])
+                ->required(),
                  Textarea::make('add_content')
                  ->label('Нэмэлт мэдээлэл'),
                  Textarea::make('content')
@@ -135,12 +141,12 @@ class IncomingShipmentResource extends Resource
                     ->searchable()
                     ->label('Тээврийн зардал')
                     ->formatStateUsing(fn ($state) => 'Тээврийн зардал: ' . number_format((float) $state, 0, '.', ',') . ' ₮'),
-                    Tables\Columns\TextColumn::make('aimag')
-                           ->sortable()
-                            ->label('Байршил')
-                            ->searchable()
-                            ->alignLeft()
-                           ->formatStateUsing(fn ($state) => 'Байршил: ' . (config('constants.aimag')[$state] ?? 'Тодорхойгүй')),
+                   Tables\Columns\TextColumn::make('bairshil.name')
+                    ->sortable()
+                    ->label('Байршил')
+                    ->searchable()
+                    ->alignLeft()
+                    ->formatStateUsing(fn ($state) => 'Байршил: ' . ($state ?? 'Тодорхойгүй')),
                      Tables\Columns\TextColumn::make('created_at')
                             ->alignLeft()
                             ->searchable()
@@ -215,9 +221,11 @@ public static function infolist(Infolist $infolist): Infolist
                 Fieldset::make('Холбоо барих')
                 ->schema([
                 TextEntry::make('phone')
+                ->size(TextEntry\TextEntrySize::Large)
                  ->weight(FontWeight::Bold)
                 ->label('Утас'),
                 TextEntry::make('second_phone')
+                ->size(TextEntry\TextEntrySize::Large)
                  ->weight(FontWeight::Bold)
                 ->label('Утас2'),
                 ]),
@@ -225,23 +233,25 @@ public static function infolist(Infolist $infolist): Infolist
                 ->schema([
                 TextEntry::make('pay')
                 ->weight(FontWeight::Bold)
-                ->label('Төлбөр'),
+                ->label('Төлбөр')
+                ->formatStateUsing(fn ($state) => number_format((float) $state, 0, '.', ','). ' ₮'),
                 TextEntry::make('payment_type')
                 ->weight(FontWeight::Bold)
                 ->label('Төлбөрийн төрөл')
                 ->formatStateUsing(fn ($state) => config('constants.payment_types')[$state] ?? 'Тодорхойгүй'),  
                 TextEntry::make('transfer_cost')
                 ->weight(FontWeight::Bold)
-                ->label('Тээврийн зардал'),             
+                ->label('Тээврийн зардал')
+                ->formatStateUsing(fn ($state) => number_format((float) $state, 0, '.', ','). ' ₮'),            
                 TextEntry::make('payment_content')
                 ->label('Төлбөрийн утга'),
                    ]),
                    Fieldset::make('Бусад мэдээлэл')
                 ->schema([
-                TextEntry::make('aimag')
-                ->weight(FontWeight::Bold)
-                ->label('Байршил')
-                ->formatStateUsing(fn ($state) =>(config('constants.aimag')[$state] ?? 'Тодорхойгүй')),
+             TextEntry::make('bairshil.name')
+                 ->label('Байршил')
+                 ->size(TextEntry\TextEntrySize::Large)
+                ->formatStateUsing(fn ($state) => ($state ?? 'Тодорхойгүй')),
                  TextEntry::make('content')
                  ->weight(FontWeight::Bold)
                 ->label('Тайлбар'),

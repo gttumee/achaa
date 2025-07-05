@@ -19,6 +19,12 @@ class Customer extends Model
         'payment_type',
         'payment_status',
         'payment_content',
-        'logistic_type'
+        'logistic_type',
+        'bairshil_id'
     ];
+
+    public function bairshil()
+{
+    return $this->belongsTo(Bairshil::class);
+}
 }
