@@ -69,10 +69,10 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                 ->mask(RawJs::make('$money($input)'))
                  ->stripCharacters(',')
                 ->numeric(),
-                 Select::make('payment_status')
-                ->label('Төлбөрийн статус')
-                ->options(config('constants.payment_status')) 
-                ->default('not_payd') 
+                 Select::make('shipping_type')
+                ->label('Төлөв')
+                ->options(config('constants.come')) 
+                ->default('not_come') 
                 ->reactive()
                   ->disabled(fn ($livewire) =>
                     $livewire instanceof \Filament\Resources\Pages\CreateRecord
@@ -126,7 +126,7 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                             ->formatStateUsing(fn ($state) => number_format((float) $state, 0, '.', ','). ' ₮')
                             ->icon('heroicon-s-document-currency-yen')
                             ->alignLeft(),
-                    Tables\Columns\TextColumn::make('payment_type')
+                      Tables\Columns\TextColumn::make('payment_type')
                             ->alignLeft()
                             ->badge()
                             ->searchable()
@@ -134,6 +134,15 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                             ->sortable()
                             ->icon('heroicon-o-credit-card')
                             ->formatStateUsing(fn ($state) => config('constants.payment_types')[$state] ?? 'Тодорхойгүй')
+                            ->alignLeft(),
+                    Tables\Columns\TextColumn::make('shipping_type')
+                            ->alignLeft()
+                            ->badge()
+                            ->searchable()
+                            ->label('Төлөв')
+                            ->sortable()
+                            ->icon('heroicon-o-truck')
+                            ->formatStateUsing(fn ($state) => config('constants.come')[$state] ?? 'Тодорхойгүй')
                             ->alignLeft(),
                     ])->space(2),
                       Tables\Columns\Layout\Stack::make([
@@ -168,42 +177,28 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                  ->button(),
                 Tables\Actions\EditAction::make()
                 ->button(),
-                Tables\Actions\Action::make('payment_status')
-                 ->label('Төлөгдөөгүй')
-                ->icon('heroicon-o-x-circle')
-                ->visible(fn ($record) => $record->payment_status !== 'payd')
-                ->requiresConfirmation()
-                ->modalHeading('Та энэ төлбөрийг төлсөн гэж бүртгэх үү？')
-                ->modalDescription('Доорх мэдээллийг оруулна уу')
-                ->modalButton('Тийм, хадгалах')
-                ->color('danger')
-                ->button()
-    ->form([
-        Select::make('payment_type')
-            ->required()
-            ->label('Төлбөрийн хэлбэр')
-            ->options(config('constants.payment_types'))
-            ->reactive()
-            ->afterStateUpdated(fn ($set) => $set('payment_contenct', null)),
-
-        TextInput::make('payment_content')
-            ->label('Төлбөрийн утга')
-            ->required(),
-    ])
-
-    ->action(function ($record, array $data) {
+        Tables\Actions\Action::make('shipping_type')
+            ->label('Ирээгүй')
+            ->icon('heroicon-o-x-circle')
+            ->visible(fn ($record) => $record->shipping_type !== 'come')
+            ->requiresConfirmation()
+            ->modalHeading('Та энэ ачааг ирсэн гэж бүртгэх үү？')
+            ->modalDescription('Энэ үйлдэл нь тухайн хэрэглэгчийг ирсэн төлөвт шилжинэ')
+            ->modalButton('Тийм, хадгалах')
+            ->color('danger')
+            ->button()
+    ->action(function ($record) {
         $record->update([
-            'payment_status' => 'payd',
-            'payment_type' => $data['payment_type'],
-            'payment_content' => $data['payment_content'],
+            'shipping_type' => 'come',
         ]);
     }),
 
-    Tables\Actions\Action::make('alreadyPayd')
-        ->label('Төлөгдсөн')
+
+    Tables\Actions\Action::make('alreadyShipped')
+        ->label('Ирсэн')
         ->disabled()
         ->button()
-        ->visible(fn ($record) => $record->payment_status === 'payd')
+        ->visible(fn ($record) => $record->shipping_type === 'come')
         ->color('success')
         ->icon('heroicon-o-check-circle'),
 ]);
@@ -252,6 +247,10 @@ public static function infolist(Infolist $infolist): Infolist
                   ->size(TextEntry\TextEntrySize::Large)
                  ->label('Байршил')
                 ->formatStateUsing(fn ($state) => ($state ?? 'Тодорхойгүй')),
+                TextEntry::make('shipping_type')
+                ->weight(FontWeight::Bold)
+                ->label('Хүргэгдсэн эсэх')
+                ->formatStateUsing(fn ($state) => config('constants.come')[$state] ?? 'Тодорхойгүй'),  
                  TextEntry::make('content')
                  ->weight(FontWeight::Bold)
                 ->label('Тайлбар'),

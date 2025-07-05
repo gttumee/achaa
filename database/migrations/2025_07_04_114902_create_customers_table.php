@@ -19,6 +19,7 @@ return new class extends Migration
         $table->string('pay');
         $table->string('second_phone')->nullable();
         $table->string('payment_type')->nullable();
+        $table->string('shipping_type')->nullable();
         $table->string('aimag')->nullable();
         $table->string('logistic_type')->nullable();
         $table->text('add_content')->nullable();

@@ -22,52 +22,35 @@ class ListCustomers extends ListRecords
 
         ];
     }
-    
-     protected function getTableQuery(): Builder
-    {
-        return parent::getTableQuery()
-            ->where('logistic_type', 'outgoing'); // ✅ ここで絞る
-    }
-    
+        
 public function getTabs(): array
 {
     return [
         'all' => Tab::make('Бүгд')
-            ->modifyQueryUsing(fn (Builder $query) =>
-                $query->where('logistic_type', 'outgoing')
-            )
               ->badge(Customer::query()
-                ->where('logistic_type', 'outgoing')
                 ->count()
             ),
-
-
-        'not_pay' => Tab::make('Төлөгдөөгүй')
-    ->modifyQueryUsing(fn (Builder $query) =>
+        'not_come' => Tab::make('Ирээгүй')
+        ->modifyQueryUsing(fn (Builder $query) =>
         $query->where(function ($query) {
-            $query->where('payment_status', 'not_payd')
-                  ->orWhereNull('payment_status');
-        })->where('logistic_type', 'outgoing')
-    )
-    ->badge(
-        Customer::query()
+            $query->where('shipping_type', 'not_come')
+                  ->orWhereNull('shipping_type');
+        })
+        )
+        ->badge(
+            Customer::query()
             ->where(function ($query) {
-                $query->where('payment_status', 'not_payd')
-                      ->orWhereNull('payment_status');
+                $query->where('shipping_type', 'not_come')
+                      ->orWhereNull('shipping_type');
             })
-            ->where('logistic_type', 'outgoing')
             ->count()
     ),
-
-
-        'payd' => Tab::make('Төлсөн')
+        'come' => Tab::make('Ирсэн')
             ->modifyQueryUsing(fn (Builder $query) =>
-                $query->where('payment_status', 'payd')
-                      ->where('logistic_type', 'outgoing')
+                $query->where('shipping_type', 'come')
             )
              ->badge(Customer::query()
-                ->where('payment_status', 'payd')
-                ->where('logistic_type', 'outgoing')
+                ->where('shipping_type', 'come')
                 ->count()
              )
     ];

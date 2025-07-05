@@ -133,6 +133,16 @@ class IncomingShipmentResource extends Resource
                             ->icon('heroicon-o-credit-card')
                             ->formatStateUsing(fn ($state) => config('constants.payment_types')[$state] ?? 'Тодорхойгүй')
                             ->alignLeft(),
+                    Tables\Columns\TextColumn::make('shipping_type')
+                            ->alignLeft()
+                            ->badge()
+                             ->color('info')
+                            ->searchable()
+                            ->label('Төлөв')
+                            ->sortable()
+                            ->icon('heroicon-o-truck')
+                            ->formatStateUsing(fn ($state) => config('constants.come')[$state] ?? 'Тодорхойгүй')
+                            ->alignLeft(),
                     ])->space(2),
                       Tables\Columns\Layout\Stack::make([
                     Tables\Columns\TextColumn::make('transfer_cost')
@@ -252,6 +262,10 @@ public static function infolist(Infolist $infolist): Infolist
                  ->label('Байршил')
                  ->size(TextEntry\TextEntrySize::Large)
                 ->formatStateUsing(fn ($state) => ($state ?? 'Тодорхойгүй')),
+                TextEntry::make('shipping_type')
+                ->weight(FontWeight::Bold)
+                ->label('Хүргэгдсэн эсэх')
+                ->formatStateUsing(fn ($state) => config('constants.come')[$state] ?? 'Тодорхойгүй'),  
                  TextEntry::make('content')
                  ->weight(FontWeight::Bold)
                 ->label('Тайлбар'),

@@ -20,7 +20,8 @@ class Customer extends Model
         'payment_status',
         'payment_content',
         'logistic_type',
-        'bairshil_id'
+        'bairshil_id',
+        'shipping_type'
     ];
 
     public function bairshil()
