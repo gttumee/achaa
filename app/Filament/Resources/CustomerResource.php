@@ -178,12 +178,12 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                 Tables\Actions\EditAction::make()
                 ->button(),
         Tables\Actions\Action::make('shipping_type')
-            ->label('Ирээгүй')
+            ->label('Хүргэгдээгүй')
             ->icon('heroicon-o-x-circle')
             ->visible(fn ($record) => $record->shipping_type !== 'come')
             ->requiresConfirmation()
-            ->modalHeading('Та энэ ачааг ирсэн гэж бүртгэх үү？')
-            ->modalDescription('Энэ үйлдэл нь тухайн хэрэглэгчийг ирсэн төлөвт шилжинэ')
+            ->modalHeading('Та энэ ачааг хүргэгдсэн гэж бүртгэх үү？')
+            ->modalDescription('Энэ үйлдэл нь тухайн хэрэглэгчийг хүргэгдсэн төлөвт шилжинэ')
             ->modalButton('Тийм, хадгалах')
             ->color('danger')
             ->button()
@@ -195,7 +195,7 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
 
 
     Tables\Actions\Action::make('alreadyShipped')
-        ->label('Ирсэн')
+        ->label('Хүргэгдсэн')
         ->disabled()
         ->button()
         ->visible(fn ($record) => $record->shipping_type === 'come')

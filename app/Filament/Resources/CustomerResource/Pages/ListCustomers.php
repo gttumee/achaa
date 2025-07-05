@@ -30,7 +30,7 @@ public function getTabs(): array
               ->badge(Customer::query()
                 ->count()
             ),
-        'not_come' => Tab::make('Ирээгүй')
+        'not_come' => Tab::make('Хүргэгдээгүй')
         ->modifyQueryUsing(fn (Builder $query) =>
         $query->where(function ($query) {
             $query->where('shipping_type', 'not_come')
@@ -45,7 +45,7 @@ public function getTabs(): array
             })
             ->count()
     ),
-        'come' => Tab::make('Ирсэн')
+        'come' => Tab::make('Хүргэгдсэн')
             ->modifyQueryUsing(fn (Builder $query) =>
                 $query->where('shipping_type', 'come')
             )
