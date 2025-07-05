@@ -200,12 +200,12 @@ class IncomingShipmentResource extends Resource
         ->visible(fn ($record) => $record->payment_status === 'payd')
         ->color('success')
         ->icon('heroicon-o-check-circle'),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+]);
+            // ->bulkActions([
+            //     Tables\Actions\BulkActionGroup::make([
+            //         Tables\Actions\DeleteBulkAction::make(),
+            //     ]),
+            // ]);
     }
     
 public static function infolist(Infolist $infolist): Infolist

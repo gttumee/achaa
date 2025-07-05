@@ -160,10 +160,8 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                  Tables\Actions\ViewAction::make()
                  ->color('primary')
                  ->button(),
-                // Төлөөгүй үед гарч ирэх action
                 Tables\Actions\EditAction::make()
                 ->button(),
-
                 Tables\Actions\Action::make('payment_status')
                  ->label('Төлөгдөөгүй')
                 ->icon('heroicon-o-x-circle')
@@ -202,12 +200,12 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
         ->visible(fn ($record) => $record->payment_status === 'payd')
         ->color('success')
         ->icon('heroicon-o-check-circle'),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+]);
+            // ->bulkActions([
+            //     Tables\Actions\BulkActionGroup::make([
+            //         Tables\Actions\DeleteBulkAction::make(),
+            //     ]),
+            // ]);
     }
     
 public static function infolist(Infolist $infolist): Infolist
