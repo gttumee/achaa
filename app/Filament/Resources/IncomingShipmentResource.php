@@ -74,7 +74,7 @@ class IncomingShipmentResource extends Resource
                     $livewire instanceof \Filament\Resources\Pages\CreateRecord
                  ),
                 Select::make('aimag')
-                ->label('Аймаг')
+                ->label('Байршил')
                 ->searchable()
                 ->options(config('constants.aimag'))
                 ->reactive(),
@@ -137,10 +137,10 @@ class IncomingShipmentResource extends Resource
                     ->formatStateUsing(fn ($state) => 'Тээврийн зардал: ' . number_format((float) $state, 0, '.', ',') . ' ₮'),
                     Tables\Columns\TextColumn::make('aimag')
                            ->sortable()
-                            ->label('Аймаг')
+                            ->label('Байршил')
                             ->searchable()
                             ->alignLeft()
-                           ->formatStateUsing(fn ($state) => 'Аймаг: ' . (config('constants.aimag')[$state] ?? 'Тодорхойгүй')),
+                           ->formatStateUsing(fn ($state) => 'Байршил: ' . (config('constants.aimag')[$state] ?? 'Тодорхойгүй')),
                      Tables\Columns\TextColumn::make('created_at')
                             ->alignLeft()
                             ->searchable()
@@ -236,7 +236,7 @@ public static function infolist(Infolist $infolist): Infolist
                 ->schema([
                 TextEntry::make('aimag')
                 ->weight(FontWeight::Bold)
-                ->label('Аймаг')
+                ->label('Байршил')
                 ->formatStateUsing(fn ($state) =>(config('constants.aimag')[$state] ?? 'Тодорхойгүй')),
                  TextEntry::make('content')
                  ->weight(FontWeight::Bold)

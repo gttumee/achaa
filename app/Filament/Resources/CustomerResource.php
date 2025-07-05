@@ -48,6 +48,8 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                 ->label('Утас')
                 ->required()
                 ->numeric()
+                ->minLength(8)
+                ->maxLength(8)
                 ->placeholder('88000011'),
                 TextInput::make('second_phone')
                 ->label('Утас2')
@@ -78,7 +80,7 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                     $livewire instanceof \Filament\Resources\Pages\CreateRecord
                  ),
                 Select::make('aimag')
-                ->label('Аймаг')
+                ->label('Байршил')
                 ->searchable()
                 ->options(config('constants.aimag'))
                 ->reactive(),
@@ -142,7 +144,7 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                             ->label('Аймаг')
                             ->searchable()
                             ->alignLeft()
-                           ->formatStateUsing(fn ($state) => 'Аймаг: ' . (config('constants.aimag')[$state] ?? 'Тодорхойгүй')),
+                           ->formatStateUsing(fn ($state) => 'Байршил: ' . (config('constants.aimag')[$state] ?? 'Тодорхойгүй')),
                      Tables\Columns\TextColumn::make('created_at')
                             ->alignLeft()
                             ->searchable()
@@ -239,7 +241,7 @@ public static function infolist(Infolist $infolist): Infolist
                 ->schema([
                 TextEntry::make('aimag')
                 ->weight(FontWeight::Bold)
-                ->label('Аймаг')
+                ->label('Байршил')
                 ->formatStateUsing(fn ($state) =>(config('constants.aimag')[$state] ?? 'Тодорхойгүй')),
                  TextEntry::make('content')
                  ->weight(FontWeight::Bold)
