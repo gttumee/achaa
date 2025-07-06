@@ -164,6 +164,14 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                             ->icon('heroicon-o-truck')
                             ->formatStateUsing(fn ($state) => config('constants.come')[$state] ?? 'Тодорхойгүй')
                             ->alignLeft(),
+                        Tables\Columns\TextColumn::make('created_at')
+                            ->alignLeft()
+                            ->searchable()
+                             ->icon('heroicon-o-calendar')
+                             ->sortable()
+                             ->badge()
+                            ->label('Хүргэсэн өдөр')
+                            ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state))
                     ])->space(2),
                       Tables\Columns\Layout\Stack::make([
                     Tables\Columns\TextColumn::make('bairshil.name')
@@ -178,12 +186,12 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                              ->sortable()
                             ->label('Төлсөн өдөр')
                             ->formatStateUsing(fn ($state) => 'Төлсөн: ' . \Carbon\Carbon::parse($state)->format('Y/m/d')),
-                              Tables\Columns\TextColumn::make('shipping_date')
+                    Tables\Columns\TextColumn::make('shipping_date')
                             ->alignLeft()
                             ->searchable()
                              ->sortable()
                             ->label('Хүргэсэн өдөр')
-                            ->formatStateUsing(fn ($state) => 'Хүргэсэн: ' . \Carbon\Carbon::parse($state)->format('Y/m/d'))
+                            ->formatStateUsing(fn ($state) => 'Хүргэсэн: ' . \Carbon\Carbon::parse($state)->format('Y/m/d')),
                     ])->space(2),
                 ])->from('md')
             ])

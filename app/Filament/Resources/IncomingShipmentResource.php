@@ -161,6 +161,14 @@ class IncomingShipmentResource extends Resource
                             ->icon('heroicon-o-truck')
                             ->formatStateUsing(fn ($state) => config('constants.come')[$state] ?? 'Тодорхойгүй')
                             ->alignLeft(),
+                    Tables\Columns\TextColumn::make('created_at')
+                            ->alignLeft()
+                            ->searchable()
+                             ->icon('heroicon-o-calendar')
+                             ->sortable()
+                             ->badge()
+                            ->label('Хүргэсэн өдөр')
+                            ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state))
                     ])->space(2),
                       Tables\Columns\Layout\Stack::make([
                    Tables\Columns\TextColumn::make('bairshil.name')
