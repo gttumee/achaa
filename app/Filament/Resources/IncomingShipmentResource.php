@@ -47,6 +47,9 @@ class IncomingShipmentResource extends Resource
                 ->required()
                 ->mask('99999999')
                 ->numeric()
+                  ->validationMessages([
+                'required' => 'Утасны дугаар заавал оруулна уу.',
+                 ])
                 ->placeholder('88000011'),
                 TextInput::make('second_phone')
                 ->label('Утас2')
@@ -65,6 +68,9 @@ class IncomingShipmentResource extends Resource
                 TextInput::make('pay')
                 ->placeholder('500,000')
                 ->required()
+                ->validationMessages([
+                'required' => 'Төлбөр заавал оруулна уу',
+                   ])
                 ->label('Төлбөр')
                 ->mask(RawJs::make('$money($input)'))
                  ->stripCharacters(',')
@@ -74,9 +80,15 @@ class IncomingShipmentResource extends Resource
                 ->relationship('bairshil', 'name')
                 ->searchable()
                 ->preload()
+                  ->validationMessages([
+                'required' => 'Байршил заавал сонгоно уу',
+                   ])
                 ->createOptionForm([
                 Forms\Components\TextInput::make('name')
                 ->label('Байршил нэр')
+                  ->validationMessages([
+                'required' => 'Байршил заавал сонгоно уу',
+                   ])
                 ->required(),
                 ])
                 ->required(),
@@ -84,11 +96,11 @@ class IncomingShipmentResource extends Resource
                  ->label('Нэмэлт мэдээлэл'),
                  Textarea::make('content')
                 ->label('Тайлбар'),
-                   Select::make('shipping_type')
-                ->label('Хүргэлтийн өлөв')
-                ->options(config('constants.come')) 
-                ->default('not_come') 
-                ->reactive(),
+                //    Select::make('shipping_type')
+                // ->label('Хүргэлтийн өлөв')
+                // ->options(config('constants.come')) 
+                // ->default('not_come') 
+                // ->reactive(),
                   Select::make('payment_type')
                 ->label('Төлбөрийн төлөв')
                 ->options(config('constants.payment_types')) 
@@ -204,7 +216,6 @@ class IncomingShipmentResource extends Resource
 
         TextInput::make('payment_content')
             ->label('Төлбөрийн утга')
-            ->required(),
     ])
 
     ->action(function ($record, array $data) {

@@ -22,12 +22,19 @@ class ListCustomers extends ListRecords
 
         ];
     }
+    
+           protected function getTableQuery(): Builder
+    {
+        return parent::getTableQuery()
+            ->where('logistic_type', 'outgoing'); // ✅ ここで絞る
+    }
         
 public function getTabs(): array
 {
     return [
         'all' => Tab::make('Бүгд')
               ->badge(Customer::query()
+                ->where('logistic_type', 'outgoing')
                 ->count()
             ),
         'not_come' => Tab::make('Хүргэгдээгүй')
@@ -37,19 +44,23 @@ public function getTabs(): array
                   ->orWhereNull('shipping_type');
         })
         )
-        ->badge(
-            Customer::query()
-            ->where(function ($query) {
+        ->badge(function () {
+    return Customer::query()
+        ->where(function ($query) {
+            $query->where(function ($query) {
                 $query->where('shipping_type', 'not_come')
                       ->orWhereNull('shipping_type');
             })
-            ->count()
-    ),
+            ->where('logistic_type', 'outgoing');
+        })
+        ->count();
+}),
         'come' => Tab::make('Хүргэгдсэн')
             ->modifyQueryUsing(fn (Builder $query) =>
                 $query->where('shipping_type', 'come')
             )
              ->badge(Customer::query()
+             ->where('logistic_type', 'outgoing')
                 ->where('shipping_type', 'come')
                 ->count()
              )

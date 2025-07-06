@@ -49,6 +49,9 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                 TextInput::make('phone')
                 ->label('Утас')
                 ->required()
+                ->validationMessages([
+                'required' => 'Утасны дугаар заавал оруулна уу.',
+                 ])
                 ->numeric()
                 ->mask('99999999')
                 ->placeholder('88000011'),
@@ -72,16 +75,25 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                 ->label('Төлбөр')
                 ->mask(RawJs::make('$money($input)'))
                  ->stripCharacters(',')
-                ->numeric(),
+                ->numeric()
+                ->validationMessages([
+                'required' => 'Төлбөр заавал оруулна уу',
+                   ]),
                Select::make('bairshil_id')
                 ->label('Байршил')
                 ->relationship('bairshil', 'name')
                 ->searchable()
                 ->preload()
+                  ->validationMessages([
+                'required' => 'Байршил заавал сонгоно уу',
+                   ])
                 ->createOptionForm([
                 Forms\Components\TextInput::make('name')
                 ->label('Байршил нэр')
-                ->required(),
+                ->required()
+                 ->validationMessages([
+                'required' => 'Байршил заавал сонгоно уу',
+                   ])
                 ])
                 ->required(),
                  Textarea::make('add_content')
@@ -93,11 +105,11 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                 ->options(config('constants.come')) 
                 ->default('not_come') 
                 ->reactive(),
-                Select::make('payment_type')
-                ->label('Төлбөрийн төлөв')
-                ->options(config('constants.payment_types')) 
-                ->default('not_pay') 
-                ->reactive(),
+                // Select::make('payment_type')
+                // ->label('Төлбөрийн төлөв')
+                // ->options(config('constants.payment_types')) 
+                // ->default('not_pay') 
+                // ->reactive(),
             ]);
     }
 
