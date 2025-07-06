@@ -69,14 +69,6 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                 ->mask(RawJs::make('$money($input)'))
                  ->stripCharacters(',')
                 ->numeric(),
-                 Select::make('shipping_type')
-                ->label('Төлөв')
-                ->options(config('constants.come')) 
-                ->default('not_come') 
-                ->reactive()
-                  ->disabled(fn ($livewire) =>
-                    $livewire instanceof \Filament\Resources\Pages\CreateRecord
-                 ),
                Select::make('bairshil_id')
                 ->label('Байршил')
                 ->relationship('bairshil', 'name')
@@ -91,7 +83,17 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                  Textarea::make('add_content')
                  ->label('Нэмэлт мэдээлэл'),
                  Textarea::make('content')
-                ->label('Тайлбар')
+                ->label('Тайлбар'),
+                 Select::make('shipping_type')
+                ->label('Хүргэлийн төлөв')
+                ->options(config('constants.come')) 
+                ->default('not_come') 
+                ->reactive(),
+                Select::make('payment_type')
+                ->label('Төлбөрийн төлөв')
+                ->options(config('constants.payment_types')) 
+                ->default('not_pay') 
+                ->reactive(),
             ]);
     }
 
@@ -131,6 +133,7 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                             ->badge()
                             ->searchable()
                             ->label('Төлбөрийн төрөл')
+                           ->color(fn ($state) => $state === 'not_pay' ? 'danger' : 'success')
                             ->sortable()
                             ->icon('heroicon-o-credit-card')
                             ->formatStateUsing(fn ($state) => config('constants.payment_types')[$state] ?? 'Тодорхойгүй')
@@ -138,6 +141,7 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                     Tables\Columns\TextColumn::make('shipping_type')
                             ->alignLeft()
                             ->badge()
+                             ->color(fn ($state) => $state === 'come' ? 'success' : 'danger')
                             ->searchable()
                             ->label('Төлөв')
                             ->sortable()
@@ -146,24 +150,24 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                             ->alignLeft(),
                     ])->space(2),
                       Tables\Columns\Layout\Stack::make([
-                    Tables\Columns\TextColumn::make('transfer_cost')
-                    ->alignLeft()
-                    ->sortable()
-                    ->searchable()
-                    ->label('Тээврийн зардал')
-                        ->formatStateUsing(fn ($state) => 'Тээврийн зардал: ' . number_format((float) $state, 0, '.', ',') . ' ₮'),
                     Tables\Columns\TextColumn::make('bairshil.name')
                     ->sortable()
                     ->label('Байршил')
                     ->searchable()
                     ->alignLeft()
                     ->formatStateUsing(fn ($state) => 'Байршил: ' . ($state ?? 'Тодорхойгүй')),
-                     Tables\Columns\TextColumn::make('created_at')
+                     Tables\Columns\TextColumn::make('payed_date')
                             ->alignLeft()
                             ->searchable()
                              ->sortable()
-                            ->label('Огноо')
-                            ->formatStateUsing(fn ($state) => 'Огноо: ' .$state),
+                            ->label('Төлсөн өдөр')
+                            ->formatStateUsing(fn ($state) => 'Төлсөн: ' . \Carbon\Carbon::parse($state)->format('Y/m/d')),
+                              Tables\Columns\TextColumn::make('shipping_date')
+                            ->alignLeft()
+                            ->searchable()
+                             ->sortable()
+                            ->label('Хүргэсэн өдөр')
+                            ->formatStateUsing(fn ($state) => 'Хүргэсэн: ' . \Carbon\Carbon::parse($state)->format('Y/m/d'))
                     ])->space(2),
                 ])->from('md')
             ])
@@ -190,6 +194,7 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
     ->action(function ($record) {
         $record->update([
             'shipping_type' => 'come',
+            'shipping_date' => now()  
         ]);
     }),
 

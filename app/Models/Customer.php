@@ -21,7 +21,9 @@ class Customer extends Model
         'payment_content',
         'logistic_type',
         'bairshil_id',
-        'shipping_type'
+        'shipping_type',
+        'shipping_date',
+        'payed_date'
     ];
 
     public function bairshil()

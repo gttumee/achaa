@@ -21,6 +21,8 @@ return new class extends Migration
         $table->string('payment_type')->nullable();
         $table->string('shipping_type')->nullable();
         $table->string('aimag')->nullable();
+        $table->datetime('shipping_date')->nullable();
+        $table->datetime('payed_date')->nullable();
         $table->string('logistic_type')->nullable();
         $table->text('add_content')->nullable();
         $table->text('content')->nullable();

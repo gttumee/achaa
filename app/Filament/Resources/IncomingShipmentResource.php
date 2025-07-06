@@ -65,14 +65,6 @@ class IncomingShipmentResource extends Resource
                 ->mask(RawJs::make('$money($input)'))
                  ->stripCharacters(',')
                 ->numeric(),
-                 Select::make('payment_status')
-                ->label('Төлбөрийн статус')
-                ->options(config('constants.payment_status')) 
-                ->default('not_payd') 
-                ->reactive()
-                ->disabled(fn ($livewire) =>
-                    $livewire instanceof \Filament\Resources\Pages\CreateRecord
-                 ),
                  Select::make('bairshil_id')
                 ->label('Байршил')
                 ->relationship('bairshil', 'name')
@@ -87,7 +79,17 @@ class IncomingShipmentResource extends Resource
                  Textarea::make('add_content')
                  ->label('Нэмэлт мэдээлэл'),
                  Textarea::make('content')
-                ->label('Тайлбар')
+                ->label('Тайлбар'),
+                   Select::make('shipping_type')
+                ->label('Хүргэлтийн өлөв')
+                ->options(config('constants.come')) 
+                ->default('not_come') 
+                ->reactive(),
+                  Select::make('payment_type')
+                ->label('Төлбөрийн төлөв')
+                ->options(config('constants.payment_types')) 
+                ->default('not_pay') 
+                ->reactive(),
             ]);
     }
 
@@ -123,12 +125,12 @@ class IncomingShipmentResource extends Resource
                             ->formatStateUsing(fn ($state) => number_format((float) $state, 0, '.', ','). ' ₮')
                             ->icon('heroicon-s-document-currency-yen')
                             ->alignLeft(),
-                    Tables\Columns\TextColumn::make('payment_type')
+                  Tables\Columns\TextColumn::make('payment_type')
                             ->alignLeft()
                             ->badge()
-                            ->color('info')
                             ->searchable()
                             ->label('Төлбөрийн төрөл')
+                           ->color(fn ($state) => $state === 'not_pay' ? 'danger' : 'success')
                             ->sortable()
                             ->icon('heroicon-o-credit-card')
                             ->formatStateUsing(fn ($state) => config('constants.payment_types')[$state] ?? 'Тодорхойгүй')
@@ -136,7 +138,7 @@ class IncomingShipmentResource extends Resource
                     Tables\Columns\TextColumn::make('shipping_type')
                             ->alignLeft()
                             ->badge()
-                             ->color('info')
+                             ->color(fn ($state) => $state === 'come' ? 'success' : 'danger')
                             ->searchable()
                             ->label('Төлөв')
                             ->sortable()
@@ -145,24 +147,24 @@ class IncomingShipmentResource extends Resource
                             ->alignLeft(),
                     ])->space(2),
                       Tables\Columns\Layout\Stack::make([
-                    Tables\Columns\TextColumn::make('transfer_cost')
-                    ->alignLeft()
-                    ->sortable()
-                    ->searchable()
-                    ->label('Тээврийн зардал')
-                    ->formatStateUsing(fn ($state) => 'Тээврийн зардал: ' . number_format((float) $state, 0, '.', ',') . ' ₮'),
                    Tables\Columns\TextColumn::make('bairshil.name')
                     ->sortable()
                     ->label('Байршил')
                     ->searchable()
                     ->alignLeft()
                     ->formatStateUsing(fn ($state) => 'Байршил: ' . ($state ?? 'Тодорхойгүй')),
-                     Tables\Columns\TextColumn::make('created_at')
+                             Tables\Columns\TextColumn::make('payed_date')
                             ->alignLeft()
                             ->searchable()
-                            ->label('Огноо')
                              ->sortable()
-                            ->formatStateUsing(fn ($state) => 'Огноо: ' .$state),
+                            ->label('Төлсөн өдөр')
+                            ->formatStateUsing(fn ($state) => 'Төлсөн: ' . \Carbon\Carbon::parse($state)->format('Y/m/d')),
+                              Tables\Columns\TextColumn::make('shipping_date')
+                            ->alignLeft()
+                            ->searchable()
+                             ->sortable()
+                            ->label('Хүргэсэн өдөр')
+                            ->formatStateUsing(fn ($state) => 'Хүргэсэн: ' . \Carbon\Carbon::parse($state)->format('Y/m/d'))
                     ])->space(2),
                 ])->from('md')
             ])
@@ -178,10 +180,10 @@ class IncomingShipmentResource extends Resource
                 Tables\Actions\EditAction::make()
                 ->button()
                 ->color('info'),
-                Tables\Actions\Action::make('payment_status')
+                Tables\Actions\Action::make('payment_types')
                  ->label('Төлөгдөөгүй')
                 ->icon('heroicon-o-x-circle')
-                ->visible(fn ($record) => $record->payment_status !== 'payd')
+                ->visible(fn ($record) => $record->payment_type === 'not_pay')
                 ->requiresConfirmation()
                 ->modalHeading('Та энэ төлбөрийг төлсөн гэж бүртгэх үү？')
                 ->modalDescription('Доорх мэдээллийг оруулна уу')
@@ -203,17 +205,17 @@ class IncomingShipmentResource extends Resource
 
     ->action(function ($record, array $data) {
         $record->update([
-            'payment_status' => 'payd',
+            'payed_date' => now(),
             'payment_type' => $data['payment_type'],
             'payment_content' => $data['payment_content'],
         ]);
     }),
 
-    Tables\Actions\Action::make('alreadyPayd')
+    Tables\Actions\Action::make('payment_type')
         ->label('Төлөгдсөн')
         ->disabled()
         ->button()
-        ->visible(fn ($record) => $record->payment_status === 'payd')
+        ->visible(fn ($record) => $record->payment_type !== 'not_pay')
         ->color('success')
         ->icon('heroicon-o-check-circle'),
 ]);
