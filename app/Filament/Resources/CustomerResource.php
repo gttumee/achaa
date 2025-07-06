@@ -34,10 +34,12 @@ class CustomerResource extends Resource
     protected static ?string $model = Customer::class;
 
 protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ирсэн
+
     protected static ?string $pluralModelLabel = 'Явсан ачаа';
     protected static bool $hasTitleCaseModelLabel = false;
     protected static ?string $navigationLabel = 'Явсан ачаа';
      protected static bool $canCreateAnother = false;
+     protected static ?string $modelLabel = 'Ачаа';
 
     public static function form(Form $form): Form
     {
@@ -48,10 +50,12 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                 ->label('Утас')
                 ->required()
                 ->numeric()
+                ->mask('99999999')
                 ->placeholder('88000011'),
                 TextInput::make('second_phone')
                 ->label('Утас2')
                 ->numeric()
+                ->mask('99999999')
                 ->placeholder('88000011'),
                 TextInput::make('transfer_cost')
                 ->label('Тээврийн зардал')

@@ -34,7 +34,9 @@ class IncomingShipmentResource extends Resource
     protected static ?string $pluralModelLabel = 'Ирсэн ачаа';
     protected static bool $hasTitleCaseModelLabel = false;
     protected static ?string $navigationLabel = 'Ирсэн ачаа';
-     protected static bool $canCreateAnother = false;
+    protected static bool $canCreateAnother = false;
+    protected static ?string $modelLabel = 'Ачаа';
+
 
     public static function form(Form $form): Form
     {
@@ -43,10 +45,12 @@ class IncomingShipmentResource extends Resource
                 TextInput::make('phone')
                 ->label('Утас')
                 ->required()
+                ->mask('99999999')
                 ->numeric()
                 ->placeholder('88000011'),
                 TextInput::make('second_phone')
                 ->label('Утас2')
+                ->mask('99999999')
                 ->numeric()
                 ->placeholder('88000011'),
                 TextInput::make('transfer_cost')
