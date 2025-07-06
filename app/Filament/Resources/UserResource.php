@@ -25,13 +25,31 @@ class UserResource extends Resource
     protected static ?string $pluralModelLabel = 'Хэрэглэгч';
     protected static bool $hasTitleCaseModelLabel = false;
     protected static ?string $navigationLabel = 'Хэрэглэгч';
+    protected static ?string $modelLabel = 'Хэрэглэгч';
+    public static function shouldRegisterNavigation(): bool
+{
+    return auth()->user()?->role === 'admin';
+}
+public static function canAccess(): bool
+{
+    return auth()->user()?->role === 'admin';
+}
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
             TextInput::make('name')->required()->label('Нэр'),
-            TextInput::make('email')->email()->required()->unique()->label('И-мэйл'),
+            TextInput::make('email')
+            ->email()
+            ->required()
+            ->unique(ignoreRecord: true)
+            ->label('И-мэйл'),
+            Select::make('role')
+                ->label('Эрх')
+                ->options(config('constants.role')) 
+                ->default('staff') 
+                ->reactive(),
             TextInput::make('password')
                 ->label('Нууц үг')
                 ->password()
@@ -46,6 +64,9 @@ class UserResource extends Resource
             ->columns([
             TextColumn::make('name')->label('Нэр'),
             TextColumn::make('email')->label('Имэйл'),
+            TextColumn::make('role')->label('Эрх')
+            ->badge()
+             ->formatStateUsing(fn ($state) => config('constants.role')[$state] ?? 'Тодорхойгүй'),
             TextColumn::make('created_at')->label('Бүртгүүлсэн')->dateTime(),
       
             ])
@@ -78,4 +99,5 @@ class UserResource extends Resource
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
+    
 }
