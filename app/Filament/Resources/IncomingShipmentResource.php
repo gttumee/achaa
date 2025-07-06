@@ -106,6 +106,9 @@ class IncomingShipmentResource extends Resource
                 ->options(config('constants.payment_types')) 
                 ->default('not_pay') 
                 ->reactive(),
+                Hidden::make('user_id')
+                ->default(fn () => auth()->id())
+                ->dehydrated(),
             ]);
     }
 
@@ -161,14 +164,6 @@ class IncomingShipmentResource extends Resource
                             ->icon('heroicon-o-truck')
                             ->formatStateUsing(fn ($state) => config('constants.come')[$state] ?? 'Тодорхойгүй')
                             ->alignLeft(),
-                    Tables\Columns\TextColumn::make('created_at')
-                            ->alignLeft()
-                            ->searchable()
-                             ->icon('heroicon-o-calendar')
-                             ->sortable()
-                             ->badge()
-                            ->label('Хүргэсэн өдөр')
-                            ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state))
                     ])->space(2),
                       Tables\Columns\Layout\Stack::make([
                    Tables\Columns\TextColumn::make('bairshil.name')
@@ -183,12 +178,14 @@ class IncomingShipmentResource extends Resource
                              ->sortable()
                             ->label('Төлсөн өдөр')
                             ->formatStateUsing(fn ($state) => 'Төлсөн: ' . \Carbon\Carbon::parse($state)->format('Y/m/d')),
-                              Tables\Columns\TextColumn::make('shipping_date')
+                         Tables\Columns\TextColumn::make('created_at')
                             ->alignLeft()
                             ->searchable()
+                             ->icon('heroicon-o-calendar')
                              ->sortable()
+                             ->badge()
                             ->label('Хүргэсэн өдөр')
-                            ->formatStateUsing(fn ($state) => 'Хүргэсэн: ' . \Carbon\Carbon::parse($state)->format('Y/m/d'))
+                            ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state))
                     ])->space(2),
                 ])->from('md')
             ])
@@ -241,6 +238,9 @@ class IncomingShipmentResource extends Resource
         ->visible(fn ($record) => $record->payment_type !== 'not_pay')
         ->color('success')
         ->icon('heroicon-o-check-circle'),
+         Tables\Actions\DeleteAction::make()
+                 ->label('') 
+                ->visible(fn ($record) => auth()->user()?->role === 'admin'),
 ]);
             // ->bulkActions([
             //     Tables\Actions\BulkActionGroup::make([
@@ -287,16 +287,15 @@ public static function infolist(Infolist $infolist): Infolist
                  ->label('Байршил')
                  ->size(TextEntry\TextEntrySize::Large)
                 ->formatStateUsing(fn ($state) => ($state ?? 'Тодорхойгүй')),
-                TextEntry::make('shipping_type')
-                ->weight(FontWeight::Bold)
-                ->label('Хүргэгдсэн эсэх')
-                ->formatStateUsing(fn ($state) => config('constants.come')[$state] ?? 'Тодорхойгүй'),  
                  TextEntry::make('content')
                  ->weight(FontWeight::Bold)
                 ->label('Тайлбар'),
                 TextEntry::make('add_content')
                 ->weight(FontWeight::Bold)
                 ->label('Нэмэлт тайлбар'),
+                 TextEntry::make('user.name')
+                ->weight(FontWeight::Bold)
+                ->label('Бичилт хийсэн'),
                 ])
             ]);
     }

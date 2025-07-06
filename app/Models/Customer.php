@@ -10,8 +10,6 @@ class Customer extends Model
         'transfer_cost',
         'phone',
         'second_phone',
-        'aimag',
-        'sum',
         'content',
         'add_content',
         'pay',
@@ -22,12 +20,18 @@ class Customer extends Model
         'logistic_type',
         'bairshil_id',
         'shipping_type',
-        'shipping_date',
-        'payed_date'
+        'payed_date',
+        'user_id'
+
     ];
 
     public function bairshil()
 {
     return $this->belongsTo(Bairshil::class);
+}
+
+public function user()
+{
+    return $this->belongsTo(User::class);
 }
 }

@@ -25,8 +25,8 @@ class StatsOverview extends BaseWidget
 
     Stat::make('Хүргэгдээгүй ачаа', ModelsCustomer::query()
         ->where(function ($query) {
-            $query->where('shipping_type', 'not_come')
-                  ->orWhereNull('shipping_type');
+            $query->where('shipping_type', 'not_come');
+                //   ->orWhereNull('shipping_type');
         })
         ->count())
         ->icon('heroicon-o-truck')

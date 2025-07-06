@@ -25,10 +25,6 @@ use Filament\Support\RawJs;
 use Filament\Notifications\Notification;
 use Filament\Infolists\Components\Fieldset;
 
-
-
-
-
 class CustomerResource extends Resource
 {
     protected static ?string $model = Customer::class;
@@ -44,7 +40,6 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
     public static function form(Form $form): Form
     {
         return $form
-      
             ->schema([
                 TextInput::make('phone')
                 ->label('Утас')
@@ -96,6 +91,11 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                    ])
                 ])
                 ->required(),
+                 Select::make('payment_type')
+                ->label('Төлбөрийн төлөв')
+                ->required()
+                ->options(config('constants.payment_types')) 
+                ->reactive(),
                  Textarea::make('add_content')
                  ->label('Нэмэлт мэдээлэл'),
                  Textarea::make('content')
@@ -105,11 +105,9 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                 ->options(config('constants.come')) 
                 ->default('not_come') 
                 ->reactive(),
-                // Select::make('payment_type')
-                // ->label('Төлбөрийн төлөв')
-                // ->options(config('constants.payment_types')) 
-                // ->default('not_pay') 
-                // ->reactive(),
+                Hidden::make('user_id')
+                ->default(fn () => auth()->id())
+                ->dehydrated(),
             ]);
     }
 
@@ -164,7 +162,15 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                             ->icon('heroicon-o-truck')
                             ->formatStateUsing(fn ($state) => config('constants.come')[$state] ?? 'Тодорхойгүй')
                             ->alignLeft(),
-                        Tables\Columns\TextColumn::make('created_at')
+                    ])->space(2),
+                    Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\TextColumn::make('bairshil.name')
+                    ->sortable()
+                    ->label('Байршил')
+                    ->searchable()
+                    ->alignLeft()
+                    ->formatStateUsing(fn ($state) => 'Байршил: ' . ($state ?? 'Тодорхойгүй')),
+                      Tables\Columns\TextColumn::make('created_at')
                             ->alignLeft()
                             ->searchable()
                              ->icon('heroicon-o-calendar')
@@ -172,26 +178,6 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
                              ->badge()
                             ->label('Хүргэсэн өдөр')
                             ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state))
-                    ])->space(2),
-                      Tables\Columns\Layout\Stack::make([
-                    Tables\Columns\TextColumn::make('bairshil.name')
-                    ->sortable()
-                    ->label('Байршил')
-                    ->searchable()
-                    ->alignLeft()
-                    ->formatStateUsing(fn ($state) => 'Байршил: ' . ($state ?? 'Тодорхойгүй')),
-                     Tables\Columns\TextColumn::make('payed_date')
-                            ->alignLeft()
-                            ->searchable()
-                             ->sortable()
-                            ->label('Төлсөн өдөр')
-                            ->formatStateUsing(fn ($state) => 'Төлсөн: ' . \Carbon\Carbon::parse($state)->format('Y/m/d')),
-                    Tables\Columns\TextColumn::make('shipping_date')
-                            ->alignLeft()
-                            ->searchable()
-                             ->sortable()
-                            ->label('Хүргэсэн өдөр')
-                            ->formatStateUsing(fn ($state) => 'Хүргэсэн: ' . \Carbon\Carbon::parse($state)->format('Y/m/d')),
                     ])->space(2),
                 ])->from('md')
             ])
@@ -230,6 +216,9 @@ protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray'; // ир
         ->visible(fn ($record) => $record->shipping_type === 'come')
         ->color('success')
         ->icon('heroicon-o-check-circle'),
+          Tables\Actions\DeleteAction::make()
+                 ->label('') 
+                ->visible(fn ($record) => auth()->user()?->role === 'admin'),
 ]);
             // ->bulkActions([
             //     Tables\Actions\BulkActionGroup::make([
@@ -286,7 +275,10 @@ public static function infolist(Infolist $infolist): Infolist
                 TextEntry::make('add_content')
                 ->weight(FontWeight::Bold)
                 ->label('Нэмэлт тайлбар'),
-                ])
+                    TextEntry::make('user.name')
+                ->weight(FontWeight::Bold)
+                ->label('Бичилт хийсэн'),
+                ]),
             ]);
     }
     public static function getRelations(): array

@@ -20,14 +20,13 @@ return new class extends Migration
         $table->string('second_phone')->nullable();
         $table->string('payment_type')->nullable();
         $table->string('shipping_type')->nullable();
-        $table->string('aimag')->nullable();
-        $table->datetime('shipping_date')->nullable();
         $table->datetime('payed_date')->nullable();
         $table->string('logistic_type')->nullable();
         $table->text('add_content')->nullable();
         $table->text('content')->nullable();
         $table->text('payment_content')->nullable();
         $table->foreignId('bairshil_id')->nullable()->constrained('bairshils');
+        $table->foreignId('user_id')->nullable()->constrained('users');
         $table->timestamps();
 
         });
