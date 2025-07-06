@@ -45,7 +45,8 @@ return $table
     ->columns([
         TextColumn::make('payment_type')
             ->formatStateUsing(fn ($state) => config('constants.payment_types')[$state] ?? 'Тодорхойгүй')
-            ->label('Төрөл'),
+            ->label('Төрөл')
+            ->badge(),
         TextColumn::make('created_at')
         ->label('Огноо')
          ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->format('Y/m/d')),
