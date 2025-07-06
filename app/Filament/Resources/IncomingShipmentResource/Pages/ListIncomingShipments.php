@@ -33,32 +33,34 @@ public function getTabs(): array
                 ->count()
             ),
 
-      'not_pay' => Tab::make('Төлөгдөөгүй')
-      ->badgeColor('info')
-        ->modifyQueryUsing(fn (Builder $query) =>
+   'not_pay' => Tab::make('Төлөгдөөгүй')
+    ->badgeColor('info')
+    ->modifyQueryUsing(fn (Builder $query) =>
         $query->where(function ($query) {
-            $query->where('payment_status', 'not_payd')
-                  ->orWhereNull('payment_status');
+            $query->where('payment_type', 'not_pay')
+                  ->orWhereNull('payment_type');
         })
-        )
-        ->badge(
-            Customer::query()
+    )
+    ->badge(
+        Customer::query()
             ->where(function ($query) {
-                $query->where('payment_status', 'not_payd')
-                      ->orWhereNull('payment_status');
+                $query->where('payment_type', 'not_pay')
+                      ->orWhereNull('payment_type');
             })
             ->count()
     ),
 
-        'payd' => Tab::make('Төлөгдсөн')
-            ->badgeColor('info')
-            ->modifyQueryUsing(fn (Builder $query) =>
-                $query->where('payment_status', 'payd')
-            )
-             ->badge(Customer::query()
-                ->where('payment_status', 'payd')
-                ->count()
-             )
+'payd' => Tab::make('Төлөгдсөн')
+    ->badgeColor('info')
+    ->modifyQueryUsing(fn (Builder $query) =>
+        $query->where('payment_type', '!=', 'not_pay')
+    )
+    ->badge(
+        Customer::query()
+            ->where('payment_type', '!=', 'not_pay')
+            ->count()
+    )
     ];
+
 }
 }
