@@ -46,12 +46,18 @@ return $table
         TextColumn::make('payment_type')
             ->formatStateUsing(fn ($state) => config('constants.payment_types')[$state] ?? 'Тодорхойгүй')
             ->label('Төрөл')
-            ->badge(),
+            ->badge()
+            ->sortable()
+            ->searchable(),
         TextColumn::make('created_at')
         ->label('Огноо')
+          ->sortable()
+        ->searchable()
          ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->format('Y/m/d')),
          TextColumn::make('pay')
             ->label('Төлбөр')
+             ->sortable()
+          ->searchable()
              ->formatStateUsing(fn ($state) => number_format((float) $state, 0, '.', ','). ' ₮')
             ->summarize(Sum::make()
                     ->formatStateUsing(fn ($state) => number_format($state, 0, '.', ',') . ' ₮')

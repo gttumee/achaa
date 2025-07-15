@@ -290,6 +290,9 @@ public static function infolist(Infolist $infolist): Infolist
                  TextEntry::make('content')
                  ->weight(FontWeight::Bold)
                 ->label('Тайлбар'),
+                TextEntry::make('payment_content')
+                ->weight(FontWeight::Bold)
+                ->label('Төлбөрийн утга'),
                 TextEntry::make('add_content')
                 ->weight(FontWeight::Bold)
                 ->label('Нэмэлт тайлбар'),
